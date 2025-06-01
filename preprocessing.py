@@ -44,21 +44,30 @@ print(train_data.isnull().sum()) #0
 # train_data = train_data.dropna(how = 'any')
 # print(len(train_data)) #45행 출력값이 1 이상이라면 실행
 
-train_data.to_csv("2024_parisolympic_cleaned1.txt", index=False, sep='\t', encoding='utf-8') #전처리 텍스트 txt파일로 저장
+train_data.to_csv("2024_parisolympic_cleaned.txt", index=False, sep='\t', encoding='utf-8') #전처리 텍스트 txt파일로 저장
 
 
-input_file = "2024_parisolympic_cleaned1.txt"
-output_file = "2024_parisolympic_cleaned2.txt"
+
+input_file = "2024_parisolympic_cleaned.txt"
+output_file = "2024_parisolympic_cleaned1.txt"
 
 with open(input_file, 'r', encoding='utf-8') as f:
     lines = f.readlines()
 
-filtered_lines = [line for line in lines if '올림픽' in line]
+print(len(lines))
+
+# 첫 줄은 헤더로 유지
+header = lines[0]
+content_lines = lines[1:]
+
+# '버닝썬'이 포함된 행만 필터링
+filtered_lines = [line for line in content_lines if '올림픽' in line]
 print(len(filtered_lines))
 
+# 헤더 + 필터링된 내용 저장
 with open(output_file, 'w', encoding='utf-8') as f:
-    f.writelines(filtered_lines)
-#54~64행 올림픽을 포함하지 않는 행은 제거, preprocessing함수에 넣어도 괜찮음
+    f.writelines([header] + filtered_lines)
+#51~69행 올림픽을 포함하지 않는 행은 제거, 필요한 경우 수행
 
 
 
@@ -84,7 +93,7 @@ print(train_data.isnull().values.any()) #False
 # train_data.loc[train_data.comment1.isnull()]
 # train_data = train_data.dropna(how = 'any')
 # print(train_data.isnull().values.any())
-# print(len(train_data)) #24행에서 출력값이 True라면 실행
+# print(len(train_data)) #90행에서 출력값이 True라면 실행
 
 def preprocessing(text):
     new_text1 = re.sub(r"\(.*?\)", "", text)
@@ -102,6 +111,6 @@ print(train_data.isnull().sum()) #0
 
 #print(train_data.loc[train_data.text.isnull()][:5])
 #train_data = train_data.dropna(how = 'any')
-#print(len(train_data)) #45행 출력값이 1 이상이라면 실행
+#print(len(train_data)) #110행 출력값이 1 이상이라면 실행
 
 train_data.to_csv("youtube(2018, gangseo)/comment2_cleaned.txt", index=False, sep='\t', encoding='utf-8') #전처리 텍스트 txt파일로 저장
