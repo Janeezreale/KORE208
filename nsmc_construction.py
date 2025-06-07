@@ -71,8 +71,8 @@ for category, labels in categories.items():
     negative_counts.append(neg_count)
 
     print(f"\n{category}:")
-    print(f"  Positive: {pos_count}")
-    print(f"  Negative: {neg_count}")
+    print(f"  Positive: {pos_count}") # 시기별로 각각 3285/4740/3231
+    print(f"  Negative: {neg_count}") # 시기별로 각각 3343/6049/3870
 
 import matplotlib.pyplot as plt
 
