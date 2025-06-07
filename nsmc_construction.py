@@ -29,17 +29,18 @@ def analyze_files(file_list, sa):
     results = []
     for file in file_list:
         with open(file, "r", encoding="utf-8") as f:
-            sentence = f.readlines()
-        for sentences in sentences:
+            lines = f.readlines()
+        for sentence in lines:
             sentence = sentence.strip()
             if not sentence:
                 continue
-            socre = sa(sentence)
+            score = sa(sentence)
             label = "positive" if score >= 0 else "negative"
             results.append(label)
     return results
 
 if __name__ == "__main__":
+    sa = sentiment_analysis()
 
     before_covid_files = ["2018.txt", "2019.txt"]
     covid_pandemic_files = ["2020.txt", "2021.txt", "2022.txt"]
