@@ -1,29 +1,32 @@
-# 예시
+
 import os
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import torch.nn.functional as F
-# Load model directl
 
 os.chdir("./") # 경로 설정
 
+# 긍정/부정 감성 분석을 위한 클래스 정의
 class sentiment_analysis:
     def __init__(self):
+        # KoELECTRA 불러오기
         self.tokenizer = AutoTokenizer.from_pretrained("monologg/koelectra-base-finetuned-nsmc")
+        # pretrained model (긍정/부정 판별용) 불러오기
         self.model = AutoModelForSequenceClassification.from_pretrained("monologg/koelectra-base-finetuned-nsmc")
 
     def __call__(self, sentence):
-        inputs = self.tokenizer(sentence, return_tensors="pt")
+        inputs = self.tokenizer(sentence, return_tensors="pt", max_length=512, truncation=True)
+        # 모델 입력 텐서 크기와 모델 내부 임베딩 레이어의 크기가 다를 때 나타나는 오류를 방지 
+        # 긴 문장이 입력되었을 때의 최대 토큰 길이를 현재 사용하는 모델인 koelectra-base-v3의 최대 토큰 길이인 512로 맞춰줌
 
         with torch.no_grad():
             outputs = self.model(**inputs)
             logits = outputs.logits
-            probs = F.softmax(logits, dim=1)  # 소프트맥스 적용
+            probs = F.softmax(logits, dim=1)  # 결과 점수를 softmax 함수로 변환
 
-    # 부정(0), 긍정(1) 순서라면
-    # 긍정 점수만 뽑기 (1번째 인덱스)
             positive_score = probs[0, 1].item()
-        return 2 * positive_score - 1
+            # 부정(0), 긍정(1) 순서라면 긍정 점수만 뽑기 (1번째 인덱스)
+        return 2 * positive_score - 1 # 부정은 -1에 가까운 음수, 긍정은 1에 가까운 양수, 0은 중립
 
 def analyze_files(file_list, sa):
     results = []
@@ -31,20 +34,22 @@ def analyze_files(file_list, sa):
         with open(file, "r", encoding="utf-8") as f:
             lines = f.readlines()
         for sentence in lines:
-            sentence = sentence.strip()
-            if not sentence:
-                continue
+            sentence = sentence.strip() # 앞뒤 공백 제거
+            if not sentence: # 빈 줄이 있다면
+                continue # 건너뛴다
             score = sa(sentence)
-            label = "positive" if score >= 0 else "negative"
+            label = "positive" if score >= 0 else "negative" # 긍정/부정 라벨링
             results.append(label)
     return results
 
+# 프로그램 시작
 if __name__ == "__main__":
     sa = sentiment_analysis()
+    # 감성 분석기 인스턴스 생성
 
-    before_covid_files = ["2018.txt", "2019.txt"]
-    covid_pandemic_files = ["2020.txt", "2021.txt", "2022.txt"]
-    post_covid_files = ["2023.txt", "2024.txt"]
+    before_covid_files = ["2018.txt", "2019.txt"] # 코로나 이전
+    covid_pandemic_files = ["2020.txt", "2021.txt", "2022_cleaned.txt"] # 팬데믹 시기
+    post_covid_files = ["2023_cleaned.txt", "2024.txt"] # 포스트 코로나
 
     categories = {
         "before covid": analyze_files(before_covid_files, sa),
@@ -52,10 +57,12 @@ if __name__ == "__main__":
         "post covid": analyze_files(post_covid_files, sa)
     }
 
+# 시각화 데이터 준비
 category_names = []
 positive_counts = []
 negative_counts = []
 
+# 각 시기별로 긍정/부정 문장 개수 세기(모델이 잘 실행되었나 확인용)
 for category, labels in categories.items():
     pos_count = labels.count("positive")
     neg_count = labels.count("negative")
@@ -69,6 +76,7 @@ for category, labels in categories.items():
 
 import matplotlib.pyplot as plt
 
+# 그래프를 그리기 위한 비율 계산
 positive_ratios = []
 negative_ratios = []
 
@@ -77,7 +85,7 @@ for pos_count, neg_count in zip(positive_counts, negative_counts):
     positive_ratios.append(pos_count / total * 100)
     negative_ratios.append(neg_count / total * 100)
 
-# 꺾은선그래프
+# 꺾은선그래프 그리가
 plt.figure(figsize=(8, 6))
 x = range(len(category_names))
 
@@ -87,7 +95,7 @@ plt.plot(x, negative_ratios, marker='o', color='red', label='Negative %')
 plt.xticks(x, category_names)
 plt.ylabel('Percentage (%)')
 plt.title('Sentiment Ratio by Period')
-plt.ylim(0, 100)  # 0~100% 로 고정
+plt.ylim(0, 100)  # y축 0~100% 로 고정
 plt.legend()
 plt.grid(True)
 plt.tight_layout()
