@@ -3,13 +3,13 @@ import numpy as np
 import re
 
 #트위터피드 전처리
-file_path = "2024_parisolympic.csv"
+file_path = "2018_metoo.csv"
 
 df = pd.read_csv(file_path)
 tweet_contents = df["Tweet_Content"].dropna() #Tweet_Content 열의 내용만 추출
-tweet_contents.to_csv("2024_parisolympic.txt", index=False, header=True, lineterminator='\n', encoding='utf-8') #txt파일로 변환 후 저장
+tweet_contents.to_csv("2018_metoo.txt", index=False, header=True, lineterminator='\n', encoding='utf-8') #txt파일로 변환 후 저장
 
-train_data = pd.read_table("2024_parisolympic.txt")
+train_data = pd.read_table("2018_metoo.txt")
 print(train_data[:5])
 print(len(train_data))
 
@@ -73,13 +73,13 @@ with open(output_file, 'w', encoding='utf-8') as f:
 
 
 #유튜브 댓글 전처리
-file_path = "youtube(2018, gangseo)/comment2.csv"
+file_path = "youtube(2019,worldcup)/comments.csv"
 
 df = pd.read_csv(file_path)
 youtube_comments = df["text"].dropna() #text 열의 내용만 추출
-youtube_comments.to_csv("youtube(2018, gangseo)/comment2.txt", index=False, header=True, lineterminator='\n', encoding='utf-8') #txt파일로 변환 후 저장
+youtube_comments.to_csv("youtube(2019,worldcup)/comments.txt", index=False, header=True, lineterminator='\n', encoding='utf-8') #txt파일로 변환 후 저장
 
-train_data = pd.read_table("youtube(2018, gangseo)/comment2.txt")
+train_data = pd.read_table("youtube(2019,worldcup)/comments.txt")
 print(train_data[:5])
 print(len(train_data))
 
@@ -109,8 +109,8 @@ print(train_data["text"][:5])
 train_data["text"].replace('', np.nan, inplace=True)
 print(train_data.isnull().sum()) #0
 
-#print(train_data.loc[train_data.text.isnull()][:5])
-#train_data = train_data.dropna(how = 'any')
-#print(len(train_data)) #110행 출력값이 1 이상이라면 실행
+print(train_data.loc[train_data.text.isnull()][:5])
+train_data = train_data.dropna(how = 'any')
+print(len(train_data)) #110행 출력값이 1 이상이라면 실행
 
-train_data.to_csv("youtube(2018, gangseo)/comment2_cleaned.txt", index=False, sep='\t', encoding='utf-8') #전처리 텍스트 txt파일로 저장
+train_data.to_csv("youtube(2019,worldcup)/comments_cleaned.txt", index=False, sep='\t', encoding='utf-8') #전처리 텍스트 txt파일로 저장
