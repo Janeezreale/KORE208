@@ -16,7 +16,7 @@ def slugify_url(url):
     return url.split("/")[-1] or "video"
 
 #저장할 파일 경로 지정
-output_dir = "./2018_gangseo"
+output_dir = "2018_gangseo"
 os.makedirs(output_dir, exist_ok=True)
 
 for url in video_urls:
