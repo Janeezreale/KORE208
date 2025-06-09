@@ -5,7 +5,8 @@
 
 ## 📚 과제 소개
 
-**코로나19 전후 감정어 사용 분석**을 주제로 코로나19 이전(2018-2019), 코로나19 범유행 기간(2020-2022), 포스트 코로나(2023-2024)로 시기를 나눠 긍정/부정 표현 사용의 시계열 변화를 알아보고자 한다.
+'**코로나19 전후 감성 분석**(긍정/부정 표현 사용의 시계열적 변화를 중심으로
+)'을 주제로 코로나19 이전(2018-2019), 코로나19 범유행 기간(2020-2022), 포스트 코로나(2023-2024)로 시기를 나눠 긍정/부정 표현 사용의 시계열 변화를 알아보고자 한다.
 
 
 주요 쟁점은 다음과 같다:
@@ -25,7 +26,7 @@
 4. 감성 분석 모델 구축: nsmc 데이터셋을 사용하여 pretrained 및 fine-tuning된 **koELECTRA-base-finetuned-nsmc**를 활용하여 구축한 데이터셋에 맞게 코드를 수정하여 모델 구축 및 성능 평가
 
 
-(성능 평가 코드 및 결과: https://colab.research.google.com/drive/1cL0t-yIWbOtrkD0p39idNA4e2csAdzLY?usp=sharing)
+성능 평가 코드 및 결과: https://colab.research.google.com/drive/1cL0t-yIWbOtrkD0p39idNA4e2csAdzLY?usp=sharing (* test 데이터셋 크기가 커서 GPU 사용이 불가피하여 Google Colab 통해 진행함)
 
 7. 빈도 기반 시계열 분석: 구축한 모델을 이용해 시기별로 긍정/부정 표현의 빈도를 집계하여 matplotlib으로 시각화
 8. 시각화 결과 분석
