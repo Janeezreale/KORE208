@@ -1,3 +1,5 @@
+# 참조 모델
+# https://huggingface.co/monologg/koelectra-base-finetuned-nsmc
 
 import os
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
@@ -9,25 +11,29 @@ os.chdir("./") # 경로 설정
 # 긍정/부정 감성 분석을 위한 클래스 정의
 class sentiment_analysis:
     def __init__(self):
-        # KoELECTRA 불러오기
+        # KoELECTRA Tokenizer 불러오기 (따로 데이터에 토큰화 과정을 거칠 필요 X)
         self.tokenizer = AutoTokenizer.from_pretrained("monologg/koelectra-base-finetuned-nsmc")
-        # pretrained model (긍정/부정 판별용) 불러오기
+        # KoELECTRA model (긍정/부정 판별용) 불러오기
         self.model = AutoModelForSequenceClassification.from_pretrained("monologg/koelectra-base-finetuned-nsmc")
 
     def __call__(self, sentence):
         inputs = self.tokenizer(sentence, return_tensors="pt", max_length=512, truncation=True)
         # 모델 입력 텐서 크기와 모델 내부 임베딩 레이어의 크기가 다를 때 나타나는 오류를 방지 
-        # 긴 문장이 입력되었을 때의 최대 토큰 길이를 현재 사용하는 모델인 koelectra-base-v3의 최대 토큰 길이인 512로 맞춰줌
+        # 긴 문장이 입력되었을 때의 최대 토큰 길이를 모델의 최대 토큰 길이인 512로 맞춰줌
 
+        # 메모리 절약을 위해 학습이 아니라 inference(추론)만 우선 진행 후 softmax 함수로 확률화
         with torch.no_grad():
             outputs = self.model(**inputs)
-            logits = outputs.logits
-            probs = F.softmax(logits, dim=1)  # 결과 점수를 softmax 함수로 변환
+            logits = outputs.logits # 예측 결과 (긍정/부정 점수)
+            probs = F.softmax(logits, dim=1)  # softmax 함수 적용하여 각 클래스(긍정/부정)가 선택될 확률로 변환
 
             positive_score = probs[0, 1].item()
-            # 부정(0), 긍정(1) 순서라면 긍정 점수만 뽑기 (1번째 인덱스)
-        return 2 * positive_score - 1 # 부정은 -1에 가까운 음수, 긍정은 1에 가까운 양수, 0은 중립
+            # 부정(0), 긍정(1) 순서로 softmax 결과가 나오므로 긍정 확률(1번째 인덱스)만 추출
+            # why? softmax 결과는 긍정/부정의 값의 합이 항상 1이므로 긍정/부정 중 하나만 알면 전체 판단이 가능함
+        return 2 * positive_score - 1 
+        # 부정은 -1에 가까운 음수, 긍정은 1에 가까운 양수, 0은 중립
 
+# 데이터 파일을 읽고 감성 분석까지 하는 코드
 def analyze_files(file_list, sa):
     results = []
     for file in file_list:
