@@ -3,6 +3,9 @@
 본 Git은 고려대학교 2025-1 국어국문학과 전공과목 '한국어정보처리'의 기말과제를 위해 생성되었다.
 
 
+Presentiation 자료: https://www.canva.com/design/DAGpo82fnIg/MVhLl49oct5oqK3fM6VcnQ/view?utm_content=DAGpo82fnIg&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h65c696a728
+
+
 ## 📚 과제 소개
 
 '**코로나19 전후 감성 분석**(긍정/부정 표현 사용의 시계열적 변화를 중심으로
